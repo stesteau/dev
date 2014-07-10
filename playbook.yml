@@ -1,0 +1,41 @@
+---
+- hosts: all
+  user: vagrant
+  tasks:
+    - name: install rvm
+      shell: "\\curl -L https://get.rvm.io | bash -s stable --ruby"
+   
+    - name: install jdk
+      apt: name=openjdk-7-jdk
+   
+
+    - name: install lein
+      shell: "wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein"
+
+    - name: copy lein to home 
+      copy: src=lein dest='/home/vagrant/bin'
+   
+    - name: chmod lein to execute
+      shell: "chmod 755 ~/bin/lein"
+   
+    - name: lein self install
+      command: "lein self-install"
+ 
+    - name: install git
+      sudo: true
+      apt: update_cache=yes
+      apt: name=git
+    
+    - name: install zsh 
+      apt: name=zsh
+
+    - name: install zsh-syntax-highlighting
+      git: repo=https://github.com/zsh-users/zsh-syntax-highlighting.git
+           dest=~/.zsh-syntax-highlighting
+
+    - name: add config to zsh
+      shell: "wget https://gist.githubusercontent.com/Makapoxa/9e6d7ac6a2b0ae3f884e/raw/fe0bf1de4130098184a37cfe7180cba20ba0527e/.zshrc"
+
+    - name: set zsh as default shell
+      sudo: true
+      shell: 'sed "s/\/bin\/bash/\/bin\/zsh/g" /etc/passwd'
